@@ -2952,11 +2952,6 @@ function Library:CreateWindow(...)
     Glow.Parent = Outer
     Glow.Name = "WindowGlow"
 
-    -- Update glow color when accent color changes
-    Library:GiveSignal(Library:GetPropertyChangedSignal("AccentColor"):Connect(function()
-        Glow.ImageColor3 = Library.AccentColor
-    end))
-
     Library:MakeDraggable(Outer, 25);
 
     local Inner = Library:Create('Frame', {
