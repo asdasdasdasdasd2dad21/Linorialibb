@@ -2900,6 +2900,40 @@ function Library:Notify(Text, Time)
     end);
 end;
 
+-- ============================================
+-- UPDATE MENU GLOW FUNCTION
+-- ============================================
+function Library:UpdateMenuGlow()
+    -- Find the window glow
+    local windowGlow = nil
+    
+    -- Search through ScreenGui for a WindowGlow
+    for _, child in ipairs(ScreenGui:GetChildren()) do
+        if child:IsA("Frame") then
+            local glow = child:FindFirstChild("WindowGlow")
+            if glow then
+                windowGlow = glow
+                break
+            end
+        end
+    end
+    
+    if windowGlow then
+        -- Update glow color
+        if getgenv().MenuGlowColor then
+            windowGlow.ImageColor3 = getgenv().MenuGlowColor
+        end
+        -- Update glow transparency (0-1, where 0 is fully visible)
+        if getgenv().MenuGlowTransparency then
+            windowGlow.ImageTransparency = 1 - getgenv().MenuGlowTransparency
+        end
+        -- Update glow visibility
+        if getgenv().MenuGlowEnabled ~= nil then
+            windowGlow.Visible = getgenv().MenuGlowEnabled
+        end
+    end
+end
+
 function Library:CreateWindow(...)
     local Arguments = { ... }
     local Config = { AnchorPoint = Vector2.zero }
@@ -2939,18 +2973,29 @@ function Library:CreateWindow(...)
     });
 
     -- Add glow to the window
+    if getgenv().MenuGlowColor == nil then
+        getgenv().MenuGlowColor = Library.AccentColor
+    end
+    if getgenv().MenuGlowTransparency == nil then
+        getgenv().MenuGlowTransparency = 0.85
+    end
+    if getgenv().MenuGlowEnabled == nil then
+        getgenv().MenuGlowEnabled = true
+    end
+    
     local Glow = Instance.new("ImageLabel")
     Glow.BackgroundTransparency = 1
     Glow.Image = "http://www.roblox.com/asset/?id=18245826428"
     Glow.ScaleType = Enum.ScaleType.Slice
     Glow.SliceCenter = Rect.new(Vector2.new(21, 21), Vector2.new(79, 79))
-    Glow.ImageColor3 = Library.AccentColor
-    Glow.ImageTransparency = 0.85
+    Glow.ImageColor3 = getgenv().MenuGlowColor
+    Glow.ImageTransparency = 1 - getgenv().MenuGlowTransparency
     Glow.Position = UDim2.new(0, -20, 0, -20)
     Glow.Size = UDim2.new(1, 40, 1, 40)
     Glow.ZIndex = 0
     Glow.Parent = Outer
     Glow.Name = "WindowGlow"
+    Glow.Visible = getgenv().MenuGlowEnabled
 
     Library:MakeDraggable(Outer, 25);
 
